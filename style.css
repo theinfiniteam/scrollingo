@@ -145,12 +145,13 @@
     display:flex;
     flex-direction: column;
     align-items:center;
-    justify-content:center;
-    padding:14px;
+    justify-content:flex-start;
+    padding:40px 14px 8px 14px; /* more top padding, less bottom */
+    margin-top: 5vh; /* shift content up */
     position:relative;
   }
   .card{
-    width:clamp(320px,86%,520px);
+    width:clamp(280px,76%,480px);
     background:var(--card);
     border-radius:18px;
     padding:28px;
@@ -223,7 +224,7 @@
   /* swipe area (mobile): invisible but captures touches */
   #swipeArea{
     position:fixed; left:0; right:0; bottom:0;
-    height:22vh; max-height:180px; pointer-events:auto;
+    height:32vh; max-height:260px; pointer-events:auto;
     z-index:60;
     background: rgba(0,0,0,0.02); /* if you want visual */
   }
