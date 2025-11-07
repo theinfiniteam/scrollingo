@@ -1,0 +1,74 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
+<title>Scrollingo - The Ultimate Scrolling Quiz</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="loadingOverlay" role="status" >
+    <div class="loading-card">
+      <div class="loading-title" aria-hidden="true">Scrollingo</div>
+      <p id="loadingCaption">You're scrolling the right way...What can 15 minutes of doomscrolling do?</p>
+        <button id="closeOverlayBtn" type="button" aria-label="Close loading overlay" style="
+          appearance:none; border:none; cursor:pointer;
+          background:#0f172a; color:#fff; font-weight:800;
+          padding:10px 14px; border-radius:10px; box-shadow:0 8px 20px rgba(2,6,23,0.12);
+        ">Skip</button>
+    </div>
+  </div>
+  <div id="tips">ℹ️ scroll/swipe to change selection tap/click (or tap the bottom area) to confirm  after confirm swipe down to continue</div>
+
+  
+  <main class="stage" id="stage">
+    <div id="hud" aria-hidden="true">
+      <div id="scoreDisplay" class="pill">Score: 0</div>
+      <div id="progress" class="progress-pill">Question 1 of 5</div>
+    </div>
+    <section class="card" id="card" role="application" aria-label="Quiz card">
+      <div class="quiz-progress" id="quizProgress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="quiz-progress-fill" id="quizProgressFill"></div>
+      </div>
+      <div id="question" class="question">Loading</div>
+      <div id="answers" class="answers" role="list"></div>
+      <div id="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div id="confetti" aria-hidden="true"></div>
+  <div id="warningBubble"></div>
+  <div id="swipeArea" aria-hidden="true"></div>
+  <div id="timeoutOverlay" aria-live="polite" aria-modal="true" role="dialog">
+    <div class="loading-card">
+      <div class="loading-clock" aria-hidden="true"></div>
+      <p id="timeoutCaption"> Slow down a sec<br/>  you're on a 5s timeout</p>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+<!-- Future Updates
+  - accounts cretion
+  - questions categories
+  - share question and your answer
+  - like, repost, save, comment for each question
+  - question ignore 
+    (scroll up to ignore question - adds one more question)
+  - question flagging
+  - suggest questions
+  - more question styles 
+   (text input, single choice (done), multiple choice, rearrange, stories, passage analysis...)
+  - personalized question recommendations
+  - adaptive learning paths
+  - gamification elements (points (done), badges, leaderboards, challenges, PvP)
+  - social sharing features
+  - user profiles and activity tracking
+  - content moderation tools
+  - analytics and reporting features
+  - user feedback and improvement suggestions
+  - engaging content, and animations
+-->
