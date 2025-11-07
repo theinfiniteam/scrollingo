@@ -147,7 +147,7 @@
     align-items:center;
     justify-content:flex-start;
     padding:40px 14px 8px 14px; /* more top padding, less bottom */
-    margin-top: 5vh; /* shift content up */
+    top: 0; /* shift content up */
     position:relative;
   }
   .card{
