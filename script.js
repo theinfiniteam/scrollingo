@@ -522,8 +522,10 @@ window.addEventListener('wheel', (e)=>{
            else -> swipe up -> showWarning("Nah fam — swipe down to move ⬇️")
 */
 let touchStartX = 0, touchStartY = 0;
-const H_THRESHOLD = 40; // horizontal detection threshold
+const H_THRESHOLD = 40; // horizontal detection threshold for swipe
 const V_THRESHOLD = 30; // minimum vertical movement to be considered swipe
+const TAP_H_THRESHOLD = 18; // tighter tap threshold for tap-to-confirm
+const TAP_V_THRESHOLD = 18;
 
 // attach to swipeArea for mobile convenience, but also listen on entire document as fallback
 const touchTarget = swipeArea; // bottom area preferred
@@ -560,8 +562,8 @@ touchTarget.addEventListener('touchend', (ev)=> {
     return;
   }
 
-  // tap detection (small movement)
-  if (absDY < V_THRESHOLD && absDX < H_THRESHOLD) {
+  // tap detection (very small movement only)
+  if (absDY < TAP_V_THRESHOLD && absDX < TAP_H_THRESHOLD) {
     // tap in the swipe area -> confirm / next
     if (finished) { restart(); return; }
     if (!confirmed) confirm();
