@@ -524,8 +524,10 @@ window.addEventListener('wheel', (e)=>{
 let touchStartX = 0, touchStartY = 0;
 const H_THRESHOLD = 40; // horizontal detection threshold for swipe
 const V_THRESHOLD = 30; // minimum vertical movement to be considered swipe
-const TAP_H_THRESHOLD = 18; // tighter tap threshold for tap-to-confirm
-const TAP_V_THRESHOLD = 18;
+// tap thresholds: make these smaller to require a very still tap to confirm
+// (reducing accidental confirmations when users attempt to swipe to change selection)
+const TAP_H_THRESHOLD = 10; // px
+const TAP_V_THRESHOLD = 10; // px
 
 // attach to swipeArea for mobile convenience, but also listen on entire document as fallback
 const touchTarget = swipeArea; // bottom area preferred
