@@ -528,10 +528,24 @@ const V_THRESHOLD = 30; // minimum vertical movement to be considered swipe
 // attach to swipeArea for mobile convenience, but also listen on entire document as fallback
 const touchTarget = swipeArea; // bottom area preferred
 
+let lastTouchMoveY = null;
 touchTarget.addEventListener('touchstart', (ev)=> {
   const t = ev.touches[0];
   touchStartX = t.clientX; touchStartY = t.clientY;
-}, {passive:true});
+  lastTouchMoveY = t.clientY;
+}, {passive:false});
+
+// Prevent pull-to-refresh on downward swipe in swipeArea
+touchTarget.addEventListener('touchmove', (ev) => {
+  if (ev.touches && ev.touches.length === 1) {
+    const t = ev.touches[0];
+    const moveY = t.clientY;
+    if (moveY - touchStartY > 10) { // user is swiping down
+      ev.preventDefault();
+    }
+    lastTouchMoveY = moveY;
+  }
+}, {passive:false});
 
 touchTarget.addEventListener('touchend', (ev)=> {
   if (isClicksBlocked()) { showTimeoutPopup(); return; }
@@ -575,7 +589,7 @@ touchTarget.addEventListener('touchend', (ev)=> {
       }
     }
   }
-}, {passive:true});
+}, {passive:false});
 
 /* fallback: allow touch anywhere (not only swipeArea) for devices that might not tap the bottom area.
    But to avoid double-handling, we only listen on swipeArea.
