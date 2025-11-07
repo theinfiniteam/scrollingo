@@ -1,0 +1,304 @@
+  :root{
+    --bg:#e6e6e6;
+    --card:#fff;
+    --muted:#6b7280;
+    --blue:#3b82f6; /* selection */
+    --green:#16a34a;
+    --red:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: 'Nunito', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--bg);
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    overflow:hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* loading overlay */
+  #loadingOverlay{
+    position:fixed;
+    inset:0;
+    background: transparent;
+    backdrop-filter:blur(8px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    background-color:rgba(31, 41, 55, 0.1);
+    transition:opacity .6s ease, visibility .6s ease;
+  }
+  #loadingOverlay.hide{ opacity:0; visibility:hidden; }
+  .loading-card{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    width:90vw;
+    height:90vh;
+    max-width:620px;
+    max-height:620px;
+    padding:42px 36px;
+    border-radius:28px;
+    background:#f9fafb;
+    box-shadow:0 24px 60px rgba(15,23,42,0.12), 0 6px 20px rgba(15,23,42,0.08);
+    border:1px solid rgba(15,23,42,0.06);
+  }
+  .loading-clock{
+    width:96px;
+    height:96px;
+    border:6px solid rgba(59,130,246,0.25);
+    border-radius:50%;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 16px 42px rgba(15,23,42,0.16);
+    background:linear-gradient(145deg,#ffffff 10%,#ebf1ff 90%);
+  }
+  .loading-clock::before,
+  .loading-clock::after{
+    content:"";
+    position:absolute;
+    bottom:50%;
+    left:50%;
+    transform-origin:bottom center;
+    background:#2563eb;
+    border-radius:999px;
+  }
+  .loading-clock::before{
+    width:4px;
+    height:34px;
+    transform:translate(-50%,0) rotate(0deg);
+    animation:minuteHand 3s linear infinite;
+  }
+  .loading-clock::after{
+    width:4px;
+    height:24px;
+    transform:translate(-50%,0) rotate(0deg);
+    animation:hourHand 6s linear infinite;
+  }
+  @keyframes minuteHand { to { transform:translate(-50%,0) rotate(360deg); } }
+  @keyframes hourHand { to { transform:translate(-50%,0) rotate(360deg); } }
+  #loadingCaption{
+    font-size:20px;
+    font-weight:700;
+    max-width:360px;
+    line-height:1.4;
+    color:#1f2937;
+  }
+  .loading-title{ font-size:36px; font-weight:900; color:#60a5fa; letter-spacing:.5px; }
+
+  /* top tip */
+  #tips {
+    margin:14px auto 8px;
+    background:#fff;
+    color:#222;
+    padding:10px 14px;
+    border-radius:12px;
+    width:clamp(300px,80%,540px);
+    box-shadow:0 6px 18px rgba(20,30,60,0.06);
+    text-align:center;
+    font-size:14px;
+  }
+  #tips.hide { opacity:0; transform:translateY(-8px); transition:opacity .5s,transform .5s; }
+
+  /* score & progress */
+  #hud {
+    width: fit-content;
+    margin: 0 auto 8px;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content: center;
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(10px);
+    border-radius:999px;
+    padding:4px 8px;
+    box-shadow:0 10px 26px rgba(15,23,42,0.08);
+    border:1px solid rgba(15,23,42,0.06);
+  }
+  .pill{
+    background:#0f172a; color:#fff; padding:4px 10px; border-radius:999px; font-weight:700; font-size:12px;
+    box-shadow:0 8px 20px rgba(2,6,23,0.12);
+  }
+  .progress-pill{ 
+    background:transparent; 
+    color:var(--muted); 
+    border:1px solid rgba(0,0,0,0.06); 
+    font-weight:700; 
+    padding:4px 8px; 
+    border-radius:8px;
+    font-size:12px;
+  }
+
+  /* quiz card */
+  .stage{
+    width:100%;
+    flex:1;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    padding:14px;
+    position:relative;
+  }
+  .card{
+    width:clamp(320px,86%,520px);
+    background:var(--card);
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 18px 40px rgba(12,20,35,0.06);
+    transform-origin:center;
+    transition:transform .36s cubic-bezier(.22,1,.36,1), opacity .3s ease;
+    position:relative;
+  }
+  .quiz-progress{
+    width:100%;
+    height:6px;
+    border-radius:999px;
+    background:rgba(15,23,42,0.08);
+    overflow:hidden;
+    margin-bottom:20px;
+    position:relative;
+  }
+  .quiz-progress-fill{
+    width:0;
+    height:100%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#3b82f6 0%,#60a5fa 100%);
+    transition:width .45s cubic-bezier(.22,1,.36,1);
+  }
+  .question{ font-size:20px; font-weight:700; color:#071126; margin-bottom:18px; text-align:center;}
+  .answers{ display:flex; flex-direction:column; gap:12px; }
+  .answer{
+    background:#fbfdff;
+    border:2px solid transparent;
+    padding:12px 14px;
+    border-radius:12px;
+    font-weight:700;
+    color:#0b1220;
+    cursor:default;
+    user-select:none;
+    transition: transform .22s ease, background .22s, border-color .22s, box-shadow .22s;
+  }
+  .answer.selected{
+    border-color:var(--blue);
+    background:#e6f2ff;
+    transform:scale(1.03);
+    box-shadow:0 10px 28px rgba(59,130,246,0.12);
+  }
+  .answer.correct{
+    border-color:var(--green);
+    background:#dcfce7;
+    color:#06361b;
+  }
+  .answer.incorrect{
+    border-color:var(--red);
+    background:#fee2e2;
+    color:#4c0303;
+  }
+
+  /* shakes (apply to .answer only) */
+  @keyframes shakeX { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  @keyframes shakeY { 0%,100%{transform:translateY(0)} 25%{transform:translateY(-8px)} 75%{transform:translateY(8px)} }
+  .shakeX { animation:shakeX .42s ease; }
+  .shakeY { animation:shakeY .32s ease; }
+
+  /* status / helper */
+  #status { margin-top:12px; font-weight:800; min-height:22px; text-align:center; color:#0b1220; }
+
+  /* final screen */
+  .final {
+    display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; padding:18px;
+    text-align:center;
+  }
+
+  /* swipe area (mobile): invisible but captures touches */
+  #swipeArea{
+    position:fixed; left:0; right:0; bottom:0;
+    height:22vh; max-height:180px; pointer-events:auto;
+    z-index:60;
+    background: rgba(0,0,0,0.02); /* if you want visual */
+  }
+
+  /* warning bubble (center lower) */
+  #warningBubble{
+    position:fixed;
+     bottom:22vh; left:50%;
+      transform:translateX(-50%);
+    background:#fffbeb; color:#92400e; padding:10px 14px; border-radius:12px; border:1px solid #facc15;
+    font-weight:800; display:none; z-index:70;
+  }
+
+  /* small helpers */
+  .muted{ color:var(--muted); font-weight:700; font-size:13px; }
+  #status .explanation{
+    margin-top:6px;
+    font-size:13px;
+    font-weight:600;
+    color:#991b1b;
+    background:#fef2f2;
+    border:1px solid #fecaca;
+    padding:8px 12px;
+    border-radius:8px;
+  }
+
+  /* timeout overlay (matches loading overlay) */
+  #timeoutOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(31, 41, 55, 0.1);
+    backdrop-filter:blur(18px);
+    visibility: hidden;
+    opacity: 0;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+    z-index:120;
+    transition: opacity .6s ease, visibility .6s ease;
+  }
+  #timeoutOverlay.show{ visibility: visible; opacity: 1; }
+
+  /* final card appear */
+  @keyframes finalAppear { 0%{opacity:0; transform:translateY(14px) scale(.98)} 100%{opacity:1; transform:translateY(0) scale(1)} }
+  .final-appear{ animation:finalAppear .45s cubic-bezier(.22,1,.36,1) both; }
+
+  /* confetti */
+  #confetti{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:90;
+  }
+  .confetti-piece{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:12px;
+    height:22px;
+    opacity:0;
+    border-radius:6px;
+    transform:translate(-50%, -50%) scale(.4) rotate(0deg);
+    animation:confettiBurst var(--dur,2.4s) ease-out forwards;
+  }
+  @keyframes confettiBurst {
+    0% {
+      transform:translate(-50%, -50%) scale(.4) rotate(0deg);
+      opacity:0;
+    }
+    12% {
+      opacity:1;
+    }
+    100% {
+      transform:translate(calc(-50% + var(--dx,0)), calc(-50% + var(--dy,0))) scale(1) rotate(var(--rot,360deg));
+      opacity:0;
+    }
+  }
