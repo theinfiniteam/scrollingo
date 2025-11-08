@@ -385,6 +385,10 @@ function goToNext(){
   if (infoButton) {
     infoButton.remove();
   }
+  // Remove explanation overlay if present
+  if (explanationVisible) {
+    hideExplanation();
+  }
 
   if (!finished){
     if (current < questions.length - 1){
@@ -614,23 +618,38 @@ touchTarget.addEventListener('touchmove', (ev) => {
   }
 }, {passive:false});
 
-// Function to show explanation temporarily
+// Explanation overlay handling (shows on top of card)
+let explanationVisible = false;
+let explanationOverlay = null;
 function showExplanation() {
   const q = questions[current];
   if (!q || !q.explanation) return;
-  
-  const explanation = `Correct answer: ${q.answers[q.correct]}. ${q.explanation}`;
-  updateStatus('❌ Incorrect', explanation);
-  
-  // Switch to swipe down only state after showing explanation
+  // Remove any existing overlay
+  hideExplanation();
+
+  // Create overlay element
+  explanationOverlay = document.createElement('div');
+  explanationOverlay.className = 'explanation-overlay';
+  explanationOverlay.innerHTML = `
+    <div class="explanation-inner">
+      <div class="explanation-title">Explanation</div>
+      <div class="explanation-body">Correct answer: ${q.answers[q.correct]}. ${q.explanation}</div>
+      <div class="explanation-hint">Swipe down in the blue area to continue</div>
+    </div>`;
+
+  document.body.appendChild(explanationOverlay);
+  explanationVisible = true;
+
+  // Ensure swipe area indicates swipe-down to continue
   updateSwipeAreaState('swipe-down-required');
-  
-  // Reset back to swipe up available after a delay
-  setTimeout(() => {
-    if (!confirmed) return; // don't reset if user has moved on
-    updateSwipeAreaState('swipe-up-required');
-    updateStatus('❌ Incorrect — Swipe up to see why, or down to continue');
-  }, 4000);
+}
+
+function hideExplanation() {
+  if (explanationOverlay && explanationOverlay.parentNode) {
+    explanationOverlay.parentNode.removeChild(explanationOverlay);
+  }
+  explanationOverlay = null;
+  explanationVisible = false;
 }
 
 touchTarget.addEventListener('touchend', (ev)=> {
@@ -671,7 +690,14 @@ touchTarget.addEventListener('touchend', (ev)=> {
       if (dy > 0 && isExplanationAvailable) { // swipe up for explanation
         showExplanation();
       } else if (dy < 0) { // swipe down for next
-        goToNext();
+        // If explanation is visible, hide it first and then advance
+        if (explanationVisible) {
+          hideExplanation();
+          // small delay to allow UI to settle before moving on
+          setTimeout(()=> goToNext(), 120);
+        } else {
+          goToNext();
+        }
       } else {
         showWarning("swipe down to continue ⬇️");
       }

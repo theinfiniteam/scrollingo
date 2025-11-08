@@ -382,6 +382,33 @@
   }
 
   /* timeout overlay (matches loading overlay) */
+  /* explanation overlay (appears above the card) */
+  .explanation-overlay{
+    position:fixed;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    z-index:210;
+    width:clamp(300px, 76%, 520px);
+    max-width:92%;
+    pointer-events:none; /* allow swipes to still be captured by swipeArea */
+  }
+  .explanation-overlay .explanation-inner{
+    pointer-events:auto;
+    background: rgba(255,255,255,0.98);
+    border-radius:14px;
+    padding:18px 20px;
+    box-shadow:0 18px 40px rgba(12,20,35,0.08);
+    border:1px solid rgba(15,23,42,0.04);
+    text-align:center;
+  }
+  .explanation-overlay .explanation-title{
+    font-weight:800; color:#0f172a; margin-bottom:8px; font-size:16px;
+  }
+  .explanation-overlay .explanation-body{ font-size:14px; color:#334155; font-weight:600; margin-bottom:10px; }
+  .explanation-overlay .explanation-hint{ font-size:13px; color:var(--muted); font-weight:800; }
+
+  /* timeout overlay (matches loading overlay) */
   #timeoutOverlay{
     position:fixed;
     inset:0;
