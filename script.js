@@ -357,6 +357,9 @@ function confirm(){
     updateSwipeAreaState('swipe-up-required');
     updateStatus('❌ Incorrect — Swipe up to see why, or down to continue');
 
+    // allow swipe-down to continue even for incorrect answers
+    swipeArea.classList.add('ready-for-next');
+
     if (!q.isRetry && !pendingRepeats.has(q.id)){
       pendingRepeats.add(q.id);
       questions.push({ ...q, isRetry:true });
