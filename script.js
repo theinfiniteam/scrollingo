@@ -330,7 +330,9 @@ function confirm(){
         updateScoreDisplay();
       }
     }
-    updateStatus('Correct! swipe down to continue');
+    // Highlight swipe area more when ready for next question
+    swipeArea.classList.add('ready-for-next');
+    updateStatus('🎉 Correct! Swipe down in blue area to continue');
     // progress updates immediately on correct
     if (quizProgress && quizProgressFill){
       const percentage = BASE_TOTAL ? (earnedIds.size / BASE_TOTAL) * 100 : 0;
@@ -339,7 +341,9 @@ function confirm(){
     }
   } else {
     const explanation = q.explanation ? `Correct answer: ${q.answers[q.correct]}. ${q.explanation}` : '';
-    updateStatus('❌ Incorrect — swipe down to continue', explanation);
+    // Highlight swipe area for next question
+    swipeArea.classList.add('ready-for-next');
+    updateStatus('❌ Incorrect — Swipe down in blue area to continue', explanation);
     if (!q.isRetry && !pendingRepeats.has(q.id)){
       pendingRepeats.add(q.id);
       questions.push({ ...q, isRetry:true });
@@ -356,6 +360,8 @@ function goToNext(){
     showWarning('answer first fr');
     return;
   }
+  // Remove ready-for-next state when moving to next question
+  swipeArea.classList.remove('ready-for-next');
 
   if (!finished){
     if (current < questions.length - 1){

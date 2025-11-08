@@ -226,7 +226,19 @@
     position:fixed; left:0; right:0; bottom:0;
     height:32vh; max-height:260px; pointer-events:auto;
     z-index:60;
-    background: rgba(0,0,0,0.02); /* if you want visual */
+    background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.03) 40%, rgba(59,130,246,0.06));
+    border-top:1px solid rgba(59,130,246,0.08);
+    backdrop-filter: blur(2px);
+  }
+  #swipeArea::after {
+    content: '⋯';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(59,130,246,0.3);
+    font-size: 24px;
+    letter-spacing: 2px;
   }
 
   /* warning bubble (center lower) */
@@ -249,6 +261,20 @@
     border:1px solid #fecaca;
     padding:8px 12px;
     border-radius:8px;
+  }
+
+  /* swipe area states */
+  #swipeArea.ready-for-next {
+    background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.06) 40%, rgba(59,130,246,0.12));
+    border-top:1px solid rgba(59,130,246,0.15);
+  }
+  #swipeArea.ready-for-next::after {
+    color: rgba(59,130,246,0.5);
+    animation: pulseDown 1.5s ease-in-out infinite;
+  }
+  @keyframes pulseDown {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
   }
 
   /* timeout overlay (matches loading overlay) */
