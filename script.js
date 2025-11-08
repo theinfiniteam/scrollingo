@@ -229,6 +229,9 @@ function render(){
   if (!questions[current]){
     return;
   }
+  
+  // Set initial state - click required for confirming answer
+  updateSwipeAreaState('click-required');
 
   // update HUD
   progressEl.textContent = getProgressLabel();
@@ -307,6 +310,14 @@ function setSelected(newIndex){
 }
 
 /* confirm (tap/click) — shows green/red, awards points, but DOES NOT auto-move to next Q */
+// Update swipe area state
+function updateSwipeAreaState(state) {
+  swipeArea.classList.remove('click-required', 'swipe-up-required', 'swipe-down-required');
+  if (state) {
+    swipeArea.classList.add(state);
+  }
+}
+
 function confirm(){
   if (confirmed || finished || isClicksBlocked()) return;
   confirmed = true;
@@ -322,6 +333,8 @@ function confirm(){
       setTimeout(()=> n.classList.remove('shakeX'),420);
     }
   });
+  // Remove click required state and add swipe down required
+  updateSwipeAreaState('swipe-down-required');
   const isCorrect = selected === q.correct;
   if (isCorrect){
     if (!q.isConfusing){
@@ -340,10 +353,10 @@ function confirm(){
       quizProgress.setAttribute('aria-valuenow', Math.round(percentage).toString());
     }
   } else {
-    const explanation = q.explanation ? `Correct answer: ${q.answers[q.correct]}. ${q.explanation}` : '';
-    // Highlight swipe area for next question
-    swipeArea.classList.add('ready-for-next');
-    updateStatus('❌ Incorrect — Swipe down in blue area to continue', explanation);
+    // Set state for explanation view availability
+    updateSwipeAreaState('swipe-up-required');
+    updateStatus('❌ Incorrect — Swipe up to see why, or down to continue');
+
     if (!q.isRetry && !pendingRepeats.has(q.id)){
       pendingRepeats.add(q.id);
       questions.push({ ...q, isRetry:true });
@@ -366,6 +379,12 @@ function goToNext(){
   }
   // Remove ready-for-next state when moving to next question
   swipeArea.classList.remove('ready-for-next');
+  
+  // Remove any existing info button
+  const infoButton = statusEl.querySelector('.info-button');
+  if (infoButton) {
+    infoButton.remove();
+  }
 
   if (!finished){
     if (current < questions.length - 1){
@@ -595,6 +614,25 @@ touchTarget.addEventListener('touchmove', (ev) => {
   }
 }, {passive:false});
 
+// Function to show explanation temporarily
+function showExplanation() {
+  const q = questions[current];
+  if (!q || !q.explanation) return;
+  
+  const explanation = `Correct answer: ${q.answers[q.correct]}. ${q.explanation}`;
+  updateStatus('❌ Incorrect', explanation);
+  
+  // Switch to swipe down only state after showing explanation
+  updateSwipeAreaState('swipe-down-required');
+  
+  // Reset back to swipe up available after a delay
+  setTimeout(() => {
+    if (!confirmed) return; // don't reset if user has moved on
+    updateSwipeAreaState('swipe-up-required');
+    updateStatus('❌ Incorrect — Swipe up to see why, or down to continue');
+  }, 4000);
+}
+
 touchTarget.addEventListener('touchend', (ev)=> {
   if (isClicksBlocked()) { showTimeoutPopup(); return; }
   // Remove touch effects
@@ -629,14 +667,13 @@ touchTarget.addEventListener('touchend', (ev)=> {
         setSelected(selected + 1);
       }
     } else {
-      // confirmed: only swipe down allowed to move to next question
-      if (dy < 0) { // swipe down (dy negative)
+      const isExplanationAvailable = swipeArea.classList.contains('swipe-up-required');
+      if (dy > 0 && isExplanationAvailable) { // swipe up for explanation
+        showExplanation();
+      } else if (dy < 0) { // swipe down for next
         goToNext();
       } else {
-        // swipe up after confirm -> warn & shake selected
-        const node = answersEl.querySelector(`.answer[data-i="${selected}"]`);
-        if (node){ node.classList.add('shakeY'); setTimeout(()=>node.classList.remove('shakeY'),350); }
-        showWarning("nah fam — swipe down to move ⬇️");
+        showWarning("swipe down to continue ⬇️");
       }
     }
   }

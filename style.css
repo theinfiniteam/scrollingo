@@ -224,7 +224,7 @@
   /* swipe area (mobile): invisible but captures touches */
   #swipeArea{
     position:fixed; left:0; right:0; bottom:0;
-    height:clamp(90px, 20vh, 150px); /* reduced height */
+    height:clamp(80px, 18vh, 140px); /* further reduced height */
     pointer-events:auto;
     z-index:60;
     background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.03) 40%, rgba(59,130,246,0.06));
@@ -237,20 +237,41 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(120deg, 
-      transparent 0%,
-      rgba(59,130,246,0.06) 25%,
-      rgba(59,130,246,0.08) 35%,
-      rgba(59,130,246,0.06) 45%,
-      transparent 100%
-    );
     opacity: 0;
     transition: opacity 0.3s ease;
-    animation: gradientMove 2.5s ease-in-out infinite;
-    transform: translateX(-100%);
   }
-  #swipeArea.ready-for-next::before {
+  /* Click required state - ripple from center */
+  #swipeArea.click-required::before {
     opacity: 1;
+    background: radial-gradient(
+      circle at center,
+      rgba(59,130,246,0.08) 0%,
+      rgba(59,130,246,0.05) 30%,
+      transparent 70%
+    );
+    animation: pulseFromCenter 2s ease-in-out infinite;
+  }
+  /* Swipe up required state */
+  #swipeArea.swipe-up-required::before {
+    opacity: 1;
+    background: linear-gradient(to top,
+      transparent 0%,
+      rgba(59,130,246,0.08) 40%,
+      rgba(59,130,246,0.05) 60%,
+      transparent 100%
+    );
+    animation: gradientMoveUp 2s ease-in-out infinite;
+  }
+  /* Swipe down required state */
+  #swipeArea.swipe-down-required::before {
+    opacity: 1;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(59,130,246,0.08) 40%,
+      rgba(59,130,246,0.05) 60%,
+      transparent 100%
+    );
+    animation: gradientMoveDown 2s ease-in-out infinite;
   }
   #swipeArea::after {
     content: '⋯';
@@ -263,10 +284,20 @@
     letter-spacing: 2px;
     z-index: 1;
   }
-  @keyframes gradientMove {
-    0% { transform: translateX(-100%); }
-    50% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
+  @keyframes pulseFromCenter {
+    0% { transform: scale(0.95); opacity: 0.3; }
+    50% { transform: scale(1.05); opacity: 0.6; }
+    100% { transform: scale(0.95); opacity: 0.3; }
+  }
+  @keyframes gradientMoveUp {
+    0% { transform: translateY(100%); opacity: 0.3; }
+    50% { transform: translateY(-20%); opacity: 0.6; }
+    100% { transform: translateY(-100%); opacity: 0.3; }
+  }
+  @keyframes gradientMoveDown {
+    0% { transform: translateY(-100%); opacity: 0.3; }
+    50% { transform: translateY(20%); opacity: 0.6; }
+    100% { transform: translateY(100%); opacity: 0.3; }
   }
 
   /* warning bubble (center lower) */
@@ -289,6 +320,21 @@
     border:1px solid #fecaca;
     padding:8px 12px;
     border-radius:8px;
+  }
+
+  /* Swipe area states for explanation */
+  #swipeArea.swipe-up-required::before {
+    animation: explanationHint 2s ease-in-out infinite;
+  }
+  @keyframes explanationHint {
+    0%, 100% { 
+      opacity: 0.3;
+      transform: translateY(20%);
+    }
+    50% { 
+      opacity: 0.6;
+      transform: translateY(-10%);
+    }
   }
 
   /* swipe area states */
