@@ -224,13 +224,33 @@
   /* swipe area (mobile): invisible but captures touches */
   #swipeArea{
     position:fixed; left:0; right:0; bottom:0;
-    height:clamp(120px, 25vh, 200px); /* more responsive height */
+    height:clamp(90px, 20vh, 150px); /* reduced height */
     pointer-events:auto;
     z-index:60;
     background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.03) 40%, rgba(59,130,246,0.06));
     border-top:1px solid rgba(59,130,246,0.08);
     backdrop-filter: blur(2px);
     padding-top: env(safe-area-inset-bottom); /* handle iPhone notch */
+    overflow: hidden; /* for gradient animations */
+  }
+  #swipeArea::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, 
+      transparent 0%,
+      rgba(59,130,246,0.06) 25%,
+      rgba(59,130,246,0.08) 35%,
+      rgba(59,130,246,0.06) 45%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: gradientMove 2.5s ease-in-out infinite;
+    transform: translateX(-100%);
+  }
+  #swipeArea.ready-for-next::before {
+    opacity: 1;
   }
   #swipeArea::after {
     content: '⋯';
@@ -241,6 +261,12 @@
     color: rgba(59,130,246,0.3);
     font-size: clamp(20px, 4vw, 24px);
     letter-spacing: 2px;
+    z-index: 1;
+  }
+  @keyframes gradientMove {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
   }
 
   /* warning bubble (center lower) */
@@ -274,9 +300,39 @@
     color: rgba(59,130,246,0.5);
     animation: pulseDown 1.5s ease-in-out infinite;
   }
+  #swipeArea.swiping::before {
+    opacity: 1;
+    animation: none;
+    transition: transform 0.3s ease-out;
+  }
+  #swipeArea.touched::before {
+    opacity: 1;
+    animation: touchRipple 0.8s ease-out forwards;
+  }
   @keyframes pulseDown {
     0%, 100% { transform: translateX(-50%) translateY(0); }
     50% { transform: translateX(-50%) translateY(6px); }
+  }
+  
+  .touch-ripple {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: touchRipple 0.8s ease-out forwards;
+  }
+  @keyframes touchRipple {
+    0% {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0.6;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
   }
 
   /* timeout overlay (matches loading overlay) */

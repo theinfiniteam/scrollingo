@@ -545,10 +545,38 @@ const TAP_V_THRESHOLD = 10; // px
 const touchTarget = swipeArea; // bottom area preferred
 
 let lastTouchMoveY = null;
+// Track swipe position for gradient effect
+let lastSwipeY = 0;
+function updateSwipeGradient(y) {
+  const swipeProgress = (y - touchStartY) / swipeArea.offsetHeight;
+  const translateX = Math.max(-100, Math.min(100, swipeProgress * 200)); // Convert to -100% to 100%
+  if (swipeArea.querySelector('::before')) {
+    swipeArea.style.setProperty('--swipe-translate', `${translateX}%`);
+  }
+}
+
+// Add touch ripple effect
+function addTouchRipple(x, y) {
+  const ripple = document.createElement('div');
+  ripple.className = 'touch-ripple';
+  ripple.style.left = `${x}px`;
+  ripple.style.top = `${y}px`;
+  swipeArea.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 1000);
+}
+
 touchTarget.addEventListener('touchstart', (ev)=> {
   const t = ev.touches[0];
   touchStartX = t.clientX; touchStartY = t.clientY;
   lastTouchMoveY = t.clientY;
+  lastSwipeY = t.clientY;
+  
+  // Add touch effect
+  const rect = swipeArea.getBoundingClientRect();
+  const x = t.clientX - rect.left;
+  const y = t.clientY - rect.top;
+  addTouchRipple(x, y);
+  swipeArea.classList.add('touched');
 }, {passive:false});
 
 // Prevent pull-to-refresh on downward swipe in swipeArea
@@ -560,11 +588,18 @@ touchTarget.addEventListener('touchmove', (ev) => {
       ev.preventDefault();
     }
     lastTouchMoveY = moveY;
+    
+    // Update swipe effect
+    swipeArea.classList.add('swiping');
+    updateSwipeGradient(moveY);
   }
 }, {passive:false});
 
 touchTarget.addEventListener('touchend', (ev)=> {
   if (isClicksBlocked()) { showTimeoutPopup(); return; }
+  // Remove touch effects
+  swipeArea.classList.remove('swiping', 'touched');
+  swipeArea.style.removeProperty('--swipe-translate');
   const t = ev.changedTouches[0];
   const dx = t.clientX - touchStartX;
   const dy = touchStartY - t.clientY; // positive = swipe up
