@@ -360,6 +360,10 @@ function goToNext(){
     showWarning('answer first fr');
     return;
   }
+  // Only allow progression via swipe
+  if (!swipeArea.classList.contains('ready-for-next')) {
+    return;
+  }
   // Remove ready-for-next state when moving to next question
   swipeArea.classList.remove('ready-for-next');
 
@@ -475,9 +479,11 @@ document.addEventListener('click', (e)=>{
     restart();
     return;
   }
-  // confirm if not confirmed, else attempt next
-  if (!confirmed) confirm();
-  else goToNext();
+  // Only allow initial confirmation by click, not progression
+  if (!confirmed) {
+    confirm();
+    showWarning("Swipe down in blue area to continue");
+  }
 });
 
 /* -- keyboard */

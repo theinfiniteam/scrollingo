@@ -224,20 +224,22 @@
   /* swipe area (mobile): invisible but captures touches */
   #swipeArea{
     position:fixed; left:0; right:0; bottom:0;
-    height:32vh; max-height:260px; pointer-events:auto;
+    height:clamp(120px, 25vh, 200px); /* more responsive height */
+    pointer-events:auto;
     z-index:60;
     background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.03) 40%, rgba(59,130,246,0.06));
     border-top:1px solid rgba(59,130,246,0.08);
     backdrop-filter: blur(2px);
+    padding-top: env(safe-area-inset-bottom); /* handle iPhone notch */
   }
   #swipeArea::after {
     content: '⋯';
     position: absolute;
-    top: 10px;
+    top: min(10px, 4%);
     left: 50%;
     transform: translateX(-50%);
     color: rgba(59,130,246,0.3);
-    font-size: 24px;
+    font-size: clamp(20px, 4vw, 24px);
     letter-spacing: 2px;
   }
 
